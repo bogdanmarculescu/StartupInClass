@@ -1,27 +1,49 @@
 package org.startup.api
 
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Service
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import javax.annotation.PostConstruct
 
+@Profile("REST API Test")
+@Primary
+@Service
 internal class DummyDataTest : StartupService() {
-
     override fun fetchData() {
         val dealer = DummyData.getCardDealer()
-        super.drawPile = dealer.retrieveDrawPile()
+        dealer.shuffleIn()
+        dealer.retrieveDrawPile().forEach { card ->
+            this.addACard(card)
+        }
     }
 }
 
-internal class StartupServiceTest {
+@ActiveProfiles("REST API Test", "test")
+@ExtendWith(SpringExtension::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+open class StartupServiceTest {
 
     @Autowired
     private lateinit var startupService : StartupService
 
+    @PostConstruct
+    fun init() {
+        startupService = DummyData.getCardDealer()
+        startupService.shuffleIn()
+    }
+
     @BeforeEach
     fun initService() {
-        startupService = DummyData.getCardDealer()
+        //startupService = DummyData.getCardDealer()
+        startupService.shuffleIn()
     }
 
     @Test
@@ -30,5 +52,4 @@ internal class StartupServiceTest {
 
         assertTrue(res != null)
     }
-
 }

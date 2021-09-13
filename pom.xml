@@ -11,7 +11,7 @@
     </modules>
     <packaging>pom</packaging>
 
-    <name>org.example StartupInClass</name>
+    <name>startupInClass</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

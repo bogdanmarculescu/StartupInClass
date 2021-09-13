@@ -18,14 +18,16 @@ interface CardCollection : CrudRepository<Card, String> {
 
 @Service
 @Transactional
-open class StartupService {
+open class StartupService(
+    private var drawPile : MutableList<Card> = mutableListOf(),
+    private var discardPile : MutableList<Card> = mutableListOf()
+) {
 
     companion object {
         private val log = LoggerFactory.getLogger(StartupService::class.java)
     }
 
-    protected var drawPile : MutableList<Card> = mutableListOf()
-    protected var discardPile : MutableList<Card> = mutableListOf()
+
 
     fun retrieveDrawPile() : MutableList<Card> {
         return drawPile
